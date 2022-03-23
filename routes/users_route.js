@@ -49,46 +49,61 @@ router.post("/login", (request, response, next) => {
   User.find({ email: request.body.email })
     .exec()
     .then((user) => {
+      console.log(":::::::user in /login:::::::::::::::::::::::::" + user);
       // array of user
       if (user.length < 1) {
         response.status(401).json({
           message: "Auth Failed",
         });
       }
-      bcrypt.compare(request.body.password, user[0].password, (err, result) => {
-        if (err) {
-          response.status(500).json({
-            message: err.message,
-          });
-        }
-        if (result) {
-          jwt.sign(
-            {
-              email: user[0].email,
-              _id: user[0]._id,
-            },
-            process.env.secret_key,
-            {
-              expiresIn: "1h",
-            },
-            (err, token) => {
-              if (err) {
-                response.status(500).json({
-                  message: "Server Error",
-                });
-              }
-              response.status(200).json({
-                message: "Auth sucessfull",
-                token: token,
+      try {
+        bcrypt.compare(
+          request.body.password,
+          user[0].password,
+          (err, result) => {
+            if (err) {
+              response.status(500).json({
+                message: err.message,
               });
             }
-          );
-        } else {
-          response.status(401).json({
-            message: "Auth Failed",
-          });
-        }
-      });
+            console.log("inside bcrypt::::::::::::::::::::::::::::");
+            if (result) {
+              jwt.sign(
+                {
+                  email: user[0].email,
+                  _id: user[0]._id,
+                },
+                process.env.secret_key,
+                {
+                  expiresIn: "1h",
+                },
+                (err, token) => {
+                  if (err) {
+                    response.status(500).json({
+                      message: "Server Error",
+                    });
+                  }
+                  response.status(200).json({
+                    message: "Auth sucessfull",
+                    user:{
+		  
+			token: token,
+			name:user[0].name,
+			email:user[0].email
+		    }
+                  });
+                }
+              );
+            } else {
+              response.status(401).json({
+                message: "Auth Failed",
+              });
+            }
+          }
+        );
+      } catch (error) {
+        console.log("checking::::::::::::" + error);
+      }
     });
 });
 

@@ -2,9 +2,12 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const morgan = require("morgan"); // its for logging the request
+// const cors = require("cors");
+
 const bodyparser = require("body-parser");
 const notesRoutes = require("./routes/notes_routes");
 const userRoutes = require("./routes/users_route");
+// app.use(cors());
 // app.use((request,response,next)=>{
 //     response.status(200).json({
 //         message:"It works with fun"
@@ -23,21 +26,24 @@ app.use(bodyparser.json());
 
 //corsssite origin resource sharing
 app.use((request, response, next) => {
+  // preflight method is options
+
+  // if (request.method === "OPTIONS") {
+  //   response.header(
+  //     "Access-Control-Allow-Methods",
+  //     "PUT,PATCH,POST,DELETE,GET"
+  //   );
+  //   console.log("checking inside the options::::::::::::::::::::::::");
+  //   response.status(200).json({});
+  // }
+
   response.header("Access-Control-Allow-Origin", "*"); // we can also specify which page can have accesss
   response.header(
     "Access-Control-Allow-Headers",
-    "Origin,X-Requested-With,Content-Type,Accept,Authorization"
+    "Origin,X-Requested-With,Content-Type,Accept,Authorization,testtext"
   ); // which kind of header want to accept
-
-  // preflight method is options
-  if (request.method === "OPTIONS") {
-    response.header(
-      "Access-Control-Allow-Methods",
-      "PUT,PATCH,POST,DELETE",
-      "GET"
-    );
-    response.status(200).json({});
-  }
+  response.header("Access-Control-Allow-Methods","PUT,PATCH,POST,DELETE,GET")	
+  console.log("@@@@@@@@@@@ in the headers");
   next();
 });
 
