@@ -12,13 +12,11 @@ router.get("/", authToken, (request, response, next) => {
     .then((notes) => {
       let count = notes.length;
       if (count) {
-        setTimeout(() => {
-          response.status(200).json({
-            message: "Notes retrieve",
-            count: notes.length,
-            Notes: notes,
-          });
-        }, 2000);
+        response.status(200).json({
+          message: "Notes retrieve",
+          count: notes.length,
+          Notes: notes,
+        });
       } else {
         response.status(400).json({
           message: "No data",
